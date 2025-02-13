@@ -12,8 +12,10 @@ I have used [tiling](https://alvinwan.com/how-to-tile-matrix-multiplication/) to
 
 # Installation
 * [Build](https://mvinay.github.io/mlir/tosa-lowerings.html) llvm-mlir in a directory
-** You need to replace `mlir-cpu-runner` by `mlir-runner` in the last command
-** Our tool was built using LLVM with commit `9cd83d6ea`. You can use the same commit by executing following command after `git clone`
+  
+  * You need to replace `mlir-cpu-runner` by `mlir-runner` in the last command
+
+  * Our tool was built using LLVM with commit `9cd83d6ea`. You can use the same commit by executing following command after `git clone`
 ```
 git checkout 9cd83d6ea
 ```
@@ -30,10 +32,10 @@ cmake ..
 make
 ```
 
-* Running (from `build` directory)
-After build is successful, the tool be present in `./tool/suprasfirstpass-opt`. You can use mllir files in `tests` directory. The size of the tile can be set using the option `--tileSize`, whose default value is 32.
+## Running (from `build` directory)
+After build is successful, the tool will be present in `./tool/suprasfirstpass-opt`. You can use mlir files in `tests` directory to run the tool. The size of the tile can be set using the option `--tileSize`, whose default value is 32.
 ```
-./tool/suprasfirstpass-opt --tileSize <tile-size> <input-file>
+./tool/suprasfirstpass-opt --tile-size <value_less_than_dimension> <input-file>
 ```
 
 For example,
@@ -71,8 +73,8 @@ module {
 
 ```
 
-# Testing
-You may use the files in `tests` directory. To print the result of matrix multiplication, run the following command in `build` directory of our tool and `$MY_LLVM_SRC` set to `llvm-project` directory
+# Testing Correctness
+To print the result of matrix multiplication, run the following command in `build` directory of our tool and `$MY_LLVM_SRC` set to `llvm-project` directory
 ```
 ./tool/suprasfirstpass-opt --tileSize 2 ../tests/matmul1.mlir | $MY_LLVM_SRC/build/bin/mlir-opt -pass-pipeline="builtin.module(one-shot-bufferize{bufferize-function-boundaries function-boundary-type-conversion=identity-layout-map}, convert-linalg-to-affine-loops, test-lower-to-llvm)" | $MY_LLVM_SRC/build/bin/mlir-runner -O3 -e main -entry-point-result=void -shared-libs=$MY_LLVM_SRC/build/lib/libmlir_runner_utils.so
 
@@ -83,7 +85,8 @@ Unranked Memref base@ = 0x55daf4c6a850 rank = 3 offset = 0 sizes = [1, 2, 2] str
 ```
 
 # References
-[1](https://github.com/j2kun/mlir-tutorial) For out of tree building
-[2](https://github.com/llvm/llvm-project/tree/main/mlir) For APIs
+[[1]](https://github.com/j2kun/mlir-tutorial) For out of tree building
+
+[[2]](https://github.com/llvm/llvm-project/tree/main/mlir) For APIs
 
 
